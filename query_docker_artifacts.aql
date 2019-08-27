@@ -1,0 +1,35 @@
+
+
+curl -H 'Content-Type:text/plain' -H 'X-JFrog-Art-Api: XxXxXxXxXxXxXxXxXxXxXxXxXxXxXxX' -X POST https://repo.backupstore.com/artifactory/api/search/aql -d '
+items.find(
+  {
+    "$and":[
+      {"$or":[
+        {"$and":[
+          {"name":{"$eq":"manifest.json"}},
+          {"$or":[
+            {"@docker.repoName":{"$match":"*/products/*"}},
+            {"@docker.repoName":{"$match":"library/*/*/*"}}
+          ]}
+        ]}
+      ]},
+      {"$or":[
+        {"@docker.manifest":{"$match":"0.7*"}}
+      ]},
+      {"$rf":[
+        {"$or":[
+          {"property.key":{"$eq":"docker.repoName"}},
+          {"property.key":{"$eq":"docker.manifest"}},
+          {"property.key":{"$eq":"sha256"}}
+        ]}
+      ]}
+    ]
+  }
+).
+include("modified","actual_sha1","modified_by","id","depth","created","created_by","name","type","original_sha1","size","original_md5","updated","repo","actual_md5","path","property.key","property.value").
+limit(1500)'
+
+
+
+
+
